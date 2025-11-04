@@ -40,14 +40,18 @@ The system uses Claude's reasoning capabilities to analyze complex immigration e
 
 ## Future Enhancements
 
-- [ ] Add document upload for automatic profile extraction
+- [ ] Add LinkedIn profile and Google Scholar, etc., for better profile extraction
 - [ ] Implement RAG for real-time policy updates
 - [ ] Add multi-language support
 - [ ] Build a comparison tool for multiple family members
 
 ## Demo
 
-[ ]
+### Upload Resume & Analyze
+![Upload Resume & Analyze](demos/flyway-upload.gif)
+   
+### View Results
+![Results](demos/flyway-results.gif)
 
 ## Note
 
