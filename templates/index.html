@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visa Eligibility Analyzer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        .visa-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .visa-card.eligible { border-left-color: #10b981; }
+        .visa-card.maybe { border-left-color: #f59e0b; }
+        .visa-card.not-eligible { border-left-color: #ef4444; }
+        .visa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .visa-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge.yes { background: #d1fae5; color: #065f46; }
+        .badge.maybe { background: #fef3c7; color: #92400e; }
+        .badge.no { background: #fee2e2; color: #991b1b; }
+        .recommended {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🛂 Visa Eligibility Analyzer</h1>
+    <p class="subtitle">Get AI-powered analysis of your US visa options</p>
+
+    <form id="analysisForm">
+        <div class="form-group">
+            <label>Education Level</label>
+            <select name="education" required>
+                <option value="">Select...</option>
+                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                <option value="Master's Degree">Master's Degree</option>
+                <option value="PhD">PhD</option>
+                <option value="High School">High School</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Years of Experience</label>
+            <input type="number" name="experience" required min="0" max="50">
+        </div>
+
+        <div class="form-group">
+            <label>Field/Industry</label>
+            <input type="text" name="field" required placeholder="e.g., Software Engineering, Data Science">
+        </div>
+
+        <div class="form-group">
+            <label>Current Immigration Status</label>
+            <select name="current_status" required>
+                <option value="">Select...</option>
+                <option value="F-1 (Student)">F-1 (Student)</option>
+                <option value="H-1B">H-1B</option>
+                <option value="L-1">L-1</option>
+                <option value="O-1">O-1</option>
+                <option value="Green Card">Green Card</option>
+                <option value="Outside US">Outside US</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Country of Origin</label>
+            <input type="text" name="country" required placeholder="e.g., India, China, Brazil">
+        </div>
+
+        <div class="form-group">
+            <label>Do you have a job offer?</label>
+            <select name="has_offer" required>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Job Details (if applicable)</label>
+            <input type="text" name="job_details" placeholder="Company name, role, salary range">
+        </div>
+
+        <div class="form-group">
+            <label>Special Achievements (publications, awards, patents, etc.)</label>
+            <textarea name="achievements" placeholder="List any notable achievements that might strengthen your case..."></textarea>
+        </div>
+
+        <button type="submit">Analyze My Eligibility</button>
+    </form>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing your profile with AI...</p>
+    </div>
+
+    <div class="results" id="results"></div>
+</div>
+
+<script>
+    document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        // Show loading
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('results').style.display = 'none';
+
+        try {
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayResults(result.analysis);
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    });
+
+    function displayResults(analysis) {
+        const resultsDiv = document.getElementById('results');
+
+        let html = `
+            <div class="recommended">
+                <h2>🎯 Recommended Path</h2>
+                <p><strong>${analysis.recommended_path}</strong></p>
+                <p style="margin-top: 10px;">${analysis.overall_assessment}</p>
+            </div>
+        `;
+
+        // Display each visa type
+        for (const [visaType, details] of Object.entries(analysis.visas)) {
+            const eligibilityClass = details.eligible.toLowerCase().replace('|', '-');
+            html += `
+                <div class="visa-card ${eligibilityClass}">
+                    <div class="visa-header">
+                        <div class="visa-title">${visaType}</div>
+                        <span class="badge ${details.eligible}">${details.eligible}</span>
+                    </div>
+                    <p style="margin-bottom: 10px;"><strong>Confidence:</strong> ${details.confidence}/10</p>
+                    <p style="margin-bottom: 10px;">${details.reasoning}</p>
+                    <p><strong>Timeline:</strong> ${details.timeline}</p>
+                    <p><strong>Est. Cost:</strong> ${details.estimated_cost}</p>
+                    ${details.next_steps.length > 0 ? `
+                        <p style="margin-top: 10px;"><strong>Next Steps:</strong></p>
+                        <ul style="margin-left: 20px;">
+                            ${details.next_steps.map(step => `<li>${step}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        if (analysis.risk_factors && analysis.risk_factors.length > 0) {
+            html += `
+                <div class="visa-card" style="border-left-color: #ef4444;">
+                    <h3>⚠️ Risk Factors to Address</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        ${analysis.risk_factors.map(risk => `<li>${risk}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        resultsDiv.innerHTML = html;
+        resultsDiv.style.display = 'block';
+    }
+</script>
+</body>
+</html>
