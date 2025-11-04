@@ -15,6 +15,21 @@ An AI-powered tool to analyze US visa eligibility using Claude API.
 - **AI:** Anthropic Claude API (Sonnet 4)
 - **Frontend:** HTML, CSS, JavaScript
 
+## Structure
+
+visa-eligibility-analyzer/
+├── main.py                
+├── requirements.txt
+├── .env
+├── .gitignore
+├── README.md
+├── demos/
+├── static
+│   └── js/
+│       └── main.js
+└── templates/
+    └── index.html
+
 ## Setup
 
 1. Clone the repo
