@@ -1,222 +1,574 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Visa Eligibility Analyzer</title>
+    <title>Flyway - Your Immigration Guide</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #FFF8F0 0%, #FFE8D6 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='24' opacity='0.15'%3E🕊️%3C/text%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='60' font-size='20' opacity='0.12'%3E🦅%3C/text%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='30' y='80' font-size='18' opacity='0.1'%3E🦆%3C/text%3E%3C/svg%3E");
+            background-size: 300px 300px, 250px 250px, 200px 200px;
+            background-position: 0 0, 100px 50px, 50px 150px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
         }
-        h1 {
-            color: #333;
+
+        .header {
+            text-align: center;
+            padding: 30px 0 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 48px;
             margin-bottom: 10px;
         }
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
+
+        h1 {
+            color: #2D3748;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
+
+        .tagline {
+            color: #718096;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .upload-card {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            text-align: center;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-card::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 60px;
+            opacity: 0.2;
+        }
+
+        .upload-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .upload-card p {
+            opacity: 0.9;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .upload-btn {
+            background: white;
+            color: #667EEA;
+            padding: 14px 32px;
+            border-radius: 100px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #uploadStatus {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 32px 0;
+            color: #A0AEC0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-section h3 {
+            color: #2D3748;
+            font-size: 18px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4A5568;
+            font-size: 14px;
         }
+
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #F7FAFC;
         }
+
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #667EEA;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
         textarea {
-            min-height: 80px;
+            min-height: 100px;
             resize: vertical;
         }
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 16px 32px;
+            border-radius: 100px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 8px;
         }
-        button:hover {
+
+        .submit-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
         }
-        button:disabled {
+
+        .submit-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
-        .results {
-            margin-top: 30px;
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
             display: none;
         }
-        .visa-card {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 6px;
+
+        .loading-bird {
+            font-size: 48px;
+            animation: bounce 1s ease-in-out infinite;
+            display: inline-block;
         }
-        .visa-card.eligible { border-left-color: #10b981; }
-        .visa-card.maybe { border-left-color: #f59e0b; }
-        .visa-card.not-eligible { border-left-color: #ef4444; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .loading p {
+            margin-top: 20px;
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .recommended-card {
+            background: linear-gradient(135deg, #4299E1 0%, #667EEA 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+        }
+
+        .recommended-card h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommended-card p {
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .recommended-card strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .visa-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 2px solid #E2E8F0;
+            transition: all 0.2s;
+        }
+
+        .visa-card:hover {
+            border-color: #CBD5E0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .visa-card.yes { border-color: #68D391; background: #F0FFF4; }
+        .visa-card.maybe { border-color: #F6AD55; background: #FFFAF0; }
+        .visa-card.no { border-color: #FC8181; background: #FFF5F5; }
+
         .visa-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
+
         .visa-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            color: #333;
+            color: #2D3748;
         }
+
         .badge {
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 6px 14px;
+            border-radius: 100px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .badge.yes { background: #d1fae5; color: #065f46; }
-        .badge.maybe { background: #fef3c7; color: #92400e; }
-        .badge.no { background: #fee2e2; color: #991b1b; }
-        .recommended {
-            background: #dbeafe;
-            border-left: 4px solid #3b82f6;
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+
+        .badge.yes { background: #C6F6D5; color: #22543D; }
+        .badge.maybe { background: #FEEBC8; color: #7C2D12; }
+        .badge.no { background: #FED7D7; color: #742A2A; }
+
+        .visa-content p {
+            color: #4A5568;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 14px;
         }
-        .loading {
+
+        .visa-content strong {
+            color: #2D3748;
+            font-weight: 600;
+        }
+
+        .visa-content ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .visa-content li {
+            color: #4A5568;
+            margin-bottom: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .confidence {
+            display: inline-block;
+            background: #EDF2F7;
+            color: #2D3748;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .risk-card {
+            background: #FFF5F5;
+            border: 2px solid #FC8181;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .risk-card h3 {
+            color: #742A2A;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .risk-card ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .risk-card li {
+            color: #742A2A;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .footer {
             text-align: center;
-            padding: 40px;
-            display: none;
+            padding: 40px 20px 20px;
+            color: #A0AEC0;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
         }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 <body>
+<div class="header">
+    <div class="logo">🌍</div>
+    <h1>Flyway</h1>
+    <p class="tagline">Your AI-powered friendly guide to US immigration</p>
+</div>
+
 <div class="container">
-    <h1>🛂 Visa Eligibility Analyzer</h1>
-    <p class="subtitle">Get AI-powered analysis of your US visa options</p>
+    <!-- Upload Section -->
+    <div class="card upload-card">
+        <h3>Got a resume handy?</h3>
+        <p>Upload it and we'll figure out the rest ✨</p>
 
-    <form id="analysisForm">
-        <div class="form-group">
-            <label>Education Level</label>
-            <select name="education" required>
-                <option value="">Select...</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Master's Degree">Master's Degree</option>
-                <option value="PhD">PhD</option>
-                <option value="High School">High School</option>
-            </select>
-        </div>
+        <input type="file" id="resumeUpload" accept=".pdf" style="display: none;">
+        <button class="upload-btn" onclick="document.getElementById('resumeUpload').click()">
+            📄 Upload Resume
+        </button>
 
-        <div class="form-group">
-            <label>Years of Experience</label>
-            <input type="number" name="experience" required min="0" max="50">
-        </div>
-
-        <div class="form-group">
-            <label>Field/Industry</label>
-            <input type="text" name="field" required placeholder="e.g., Software Engineering, Data Science">
-        </div>
-
-        <div class="form-group">
-            <label>Current Immigration Status</label>
-            <select name="current_status" required>
-                <option value="">Select...</option>
-                <option value="F-1 (Student)">F-1 (Student)</option>
-                <option value="H-1B">H-1B</option>
-                <option value="L-1">L-1</option>
-                <option value="O-1">O-1</option>
-                <option value="Green Card">Green Card</option>
-                <option value="Outside US">Outside US</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Country of Origin</label>
-            <input type="text" name="country" required placeholder="e.g., India, China, Brazil">
-        </div>
-
-        <div class="form-group">
-            <label>Do you have a job offer?</label>
-            <select name="has_offer" required>
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Job Details (if applicable)</label>
-            <input type="text" name="job_details" placeholder="Company name, role, salary range">
-        </div>
-
-        <div class="form-group">
-            <label>Special Achievements (publications, awards, patents, etc.)</label>
-            <textarea name="achievements" placeholder="List any notable achievements that might strengthen your case..."></textarea>
-        </div>
-
-        <button type="submit">Analyze My Eligibility</button>
-    </form>
-
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>Analyzing your profile with AI...</p>
+        <div id="uploadStatus"></div>
     </div>
 
+    <div class="divider">or tell us about yourself</div>
+
+    <!-- Form Section -->
+    <div class="card">
+        <form id="analysisForm">
+            <div class="form-section">
+                <h3>📚 Education & Experience</h3>
+
+                <div class="form-group">
+                    <label>What's your highest degree?</label>
+                    <select name="education" required>
+                        <option value="">Choose one...</option>
+                        <option value="PhD">PhD</option>
+                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                        <option value="High School">High School</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Years of professional experience</label>
+                    <input type="number" name="experience" required min="0" max="50" placeholder="e.g., 4">
+                </div>
+
+                <div class="form-group">
+                    <label>Your field or industry</label>
+                    <input type="text" name="field" required placeholder="e.g., Software Engineering">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>🏠 Current Situation</h3>
+
+                <div class="form-group">
+                    <label>Current immigration status</label>
+                    <select name="current_status" required>
+                        <option value="">Select...</option>
+                        <option value="F-1 (Student)">F-1 Student Visa</option>
+                        <option value="H-1B">H-1B Work Visa</option>
+                        <option value="L-1">L-1 Transfer</option>
+                        <option value="O-1">O-1 Extraordinary Ability</option>
+                        <option value="Green Card">Green Card</option>
+                        <option value="Outside US">Currently outside the US</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Where are you from?</label>
+                    <input type="text" name="country" required placeholder="e.g., India">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>💼 Job Details</h3>
+
+                <div class="form-group">
+                    <label>Do you have a job offer?</label>
+                    <select name="has_offer" required>
+                        <option value="No">Not yet</option>
+                        <option value="Yes">Yes!</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Job details (optional)</label>
+                    <input type="text" name="job_details" placeholder="Company, role, etc.">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>🏆 Special Achievements</h3>
+
+                <div class="form-group">
+                    <label>Anything that makes you stand out?</label>
+                    <textarea name="achievements" placeholder="Publications, awards, patents, speaking engagements, media mentions..."></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Analyze My Options →
+            </button>
+        </form>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" id="loading">
+        <div class="loading-bird">🕊️</div>
+        <p>Analyzing your profile...</p>
+    </div>
+
+    <!-- Results -->
     <div class="results" id="results"></div>
 </div>
 
+<div class="footer">
+    Made with care • This tool provides guidance only • Consult an immigration attorney for your specific case
+</div>
+
 <script>
+    // Resume upload handler
+    document.getElementById('resumeUpload').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const statusDiv = document.getElementById('uploadStatus');
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<div style="color: white;">🔍 Reading your resume...</div>';
+
+        try {
+            const formData = new FormData();
+            formData.append('resume', file);
+
+            const response = await fetch('/parse-resume', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+                document.querySelector('[name="education"]').value = data.education || '';
+                document.querySelector('[name="experience"]').value = data.experience_years || '';
+                document.querySelector('[name="field"]').value = data.field || '';
+                document.querySelector('[name="current_status"]').value = data.current_status || '';
+                document.querySelector('[name="country"]').value = data.country || '';
+                document.querySelector('[name="has_offer"]').value = data.has_offer || 'No';
+                document.querySelector('[name="job_details"]').value = data.job_details || '';
+                document.querySelector('[name="achievements"]').value = data.achievements || '';
+
+                statusDiv.innerHTML = '<div style="color: white;">✨ Got it! Check the details below</div>';
+
+                setTimeout(() => {
+                    document.getElementById('analysisForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500);
+            } else {
+                statusDiv.innerHTML = `<div style="color: white;">😕 ${result.error}</div>`;
+            }
+        } catch (error) {
+            statusDiv.innerHTML = `<div style="color: white;">❌ ${error.message}</div>`;
+        }
+    });
+
+    // Form submission handler
     document.getElementById('analysisForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
-        // Show loading
         document.getElementById('loading').style.display = 'block';
         document.getElementById('results').style.display = 'none';
+
+        window.scrollTo({ top: document.getElementById('loading').offsetTop - 100, behavior: 'smooth' });
 
         try {
             const response = await fetch('/analyze', {
@@ -230,63 +582,76 @@
             if (result.success) {
                 displayResults(result.analysis);
             } else {
-                alert('Error: ' + result.error);
+                alert('Oops! ' + result.error);
             }
         } catch (error) {
-            alert('Error: ' + error.message);
+            alert('Something went wrong: ' + error.message);
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
     });
 
-    function displayResults(analysis) {
-        const resultsDiv = document.getElementById('results');
+    // Display results function
+    // Display results function
+function displayResults(analysis) {
+    const resultsDiv = document.getElementById('results');
 
-        let html = `
-            <div class="recommended">
-                <h2>🎯 Recommended Path</h2>
-                <p><strong>${analysis.recommended_path}</strong></p>
-                <p style="margin-top: 10px;">${analysis.overall_assessment}</p>
-            </div>
-        `;
+    let html = `
+        <div class="recommended-card">
+            <h2>🎯 Your Best Path Forward</h2>
+            <strong>${analysis.recommended_path}</strong>
+            <p>${analysis.overall_assessment}</p>
+        </div>
+    `;
 
-        // Display each visa type
-        for (const [visaType, details] of Object.entries(analysis.visas)) {
-            const eligibilityClass = details.eligible.toLowerCase().replace('|', '-');
-            html += `
-                <div class="visa-card ${eligibilityClass}">
-                    <div class="visa-header">
-                        <div class="visa-title">${visaType}</div>
-                        <span class="badge ${details.eligible}">${details.eligible}</span>
-                    </div>
-                    <p style="margin-bottom: 10px;"><strong>Confidence:</strong> ${details.confidence}/10</p>
-                    <p style="margin-bottom: 10px;">${details.reasoning}</p>
+    // Sort visas: yes first, then maybe, then no
+    const sortOrder = { 'yes': 1, 'maybe': 2, 'no': 3 };
+    const sortedVisas = Object.entries(analysis.visas).sort((a, b) => {
+        return sortOrder[a[1].eligible] - sortOrder[b[1].eligible];
+    });
+
+    // Display each visa type in sorted order
+    for (const [visaType, details] of sortedVisas) {
+        html += `
+            <div class="card visa-card ${details.eligible}">
+                <div class="visa-header">
+                    <div class="visa-title">${visaType}</div>
+                    <span class="badge ${details.eligible}">${details.eligible}</span>
+                </div>
+                <div class="visa-content">
+                    <span class="confidence">Confidence: ${details.confidence}/10</span>
+                    <p>${details.reasoning}</p>
                     <p><strong>Timeline:</strong> ${details.timeline}</p>
-                    <p><strong>Est. Cost:</strong> ${details.estimated_cost}</p>
-                    ${details.next_steps.length > 0 ? `
-                        <p style="margin-top: 10px;"><strong>Next Steps:</strong></p>
-                        <ul style="margin-left: 20px;">
+                    <p><strong>Cost:</strong> ${details.estimated_cost}</p>
+                    ${details.next_steps && details.next_steps.length > 0 ? `
+                        <p style="margin-top: 16px;"><strong>Next Steps:</strong></p>
+                        <ul>
                             ${details.next_steps.map(step => `<li>${step}</li>`).join('')}
                         </ul>
                     ` : ''}
                 </div>
-            `;
-        }
-
-        if (analysis.risk_factors && analysis.risk_factors.length > 0) {
-            html += `
-                <div class="visa-card" style="border-left-color: #ef4444;">
-                    <h3>⚠️ Risk Factors to Address</h3>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        ${analysis.risk_factors.map(risk => `<li>${risk}</li>`).join('')}
-                    </ul>
-                </div>
-            `;
-        }
-
-        resultsDiv.innerHTML = html;
-        resultsDiv.style.display = 'block';
+            </div>
+        `;
     }
+
+    if (analysis.risk_factors && analysis.risk_factors.length > 0) {
+        html += `
+            <div class="risk-card">
+                <h3>⚠️ Things to Watch Out For</h3>
+                <ul>
+                    ${analysis.risk_factors.map(risk => `<li>${risk}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+
+    setTimeout(() => {
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+}
 </script>
 </body>
 </html>
