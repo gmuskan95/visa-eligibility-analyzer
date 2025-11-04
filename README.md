@@ -28,7 +28,7 @@ An AI-powered tool to analyze US visa eligibility using Claude API.
    ANTHROPIC_API_KEY=sk-ant-xxxxx
 ```
 5. Run: `python app.py`
-6. Visit http://localhost:5000
+6. Visit http://127.0.0.1:5000 or http://localhost:5000
 
 ## Architecture
 
