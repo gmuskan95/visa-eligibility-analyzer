@@ -1,4 +1,4 @@
-# visa-eligibility-analyzer
+# Flyway: visa-eligibility-analyzer
 
 An AI-powered tool to analyze US visa eligibility using Claude API.
 
